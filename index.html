@@ -170,31 +170,48 @@
 
   /* ---------- RESPONSIVE ---------- */
   @media (max-width: 720px){
-    .topbar{ padding: 14px 20px; }
+    .topbar{ padding: 14px 20px; position:relative; z-index: 1001; }
     .menu-toggle{ display:flex; }
     nav{
-      display:none;
-      position:absolute;
-      left:0; right:0;
-      top: 100%;
+      display:flex;
+      position:fixed;
+      top:0;
+      right:0;
+      width: 50%;
+      height: 100vh;
       flex-direction:column;
       align-items:flex-start;
+      justify-content:flex-start;
       gap: 0;
       background: var(--bg);
-      border-bottom: 1px solid var(--line);
-      padding: 8px 20px 16px;
+      border-left: 1px solid var(--line);
+      padding: 100px 24px 24px;
+      transform: translateX(100%);
+      transition: transform 0.35s ease;
+      z-index: 1000;
+      overflow-y:auto;
     }
-    nav.open{ display:flex; }
+    nav.open{ transform: translateX(0); }
     nav a{
       font-size: 14px;
       width:100%;
-      padding: 12px 0;
+      padding: 14px 0;
       border-bottom: 1px solid var(--line);
     }
     nav a:last-child{ border-bottom:none; }
-    .topbar{ position:relative; }
+    .nav-overlay{
+      display:none;
+      position:fixed;
+      inset:0;
+      background: rgba(0,0,0,0.5);
+      z-index: 999;
+    }
+    .nav-overlay.open{ display:block; }
     .hero{ padding: 60px 20px 60px; }
     .grid{ grid-template-columns: repeat(2, 1fr); }
+  }
+  @media (min-width: 721px){
+    .nav-overlay{ display:none !important; }
   }
   @media (max-width: 420px){
     .grid{ grid-template-columns: repeat(1, 1fr); }
@@ -225,14 +242,24 @@
     </nav>
   </div>
 
+  <div class="nav-overlay" id="navOverlay"></div>
+
   <script>
     const menuToggle = document.getElementById('menuToggle');
     const siteNav = document.getElementById('siteNav');
-    menuToggle.addEventListener('click', () => {
-      const isOpen = siteNav.classList.toggle('open');
+    const navOverlay = document.getElementById('navOverlay');
+
+    function setMenu(isOpen){
+      siteNav.classList.toggle('open', isOpen);
+      navOverlay.classList.toggle('open', isOpen);
       menuToggle.classList.toggle('open', isOpen);
       menuToggle.setAttribute('aria-expanded', isOpen);
+    }
+
+    menuToggle.addEventListener('click', () => {
+      setMenu(!siteNav.classList.contains('open'));
     });
+    navOverlay.addEventListener('click', () => setMenu(false));
   </script>
 
   <section class="hero">
