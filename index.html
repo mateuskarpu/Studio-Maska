@@ -123,50 +123,87 @@
     color: var(--muted);
   }
 
-  /* ---------- GRID ---------- */
-  .grid{
-    display:grid;
-    grid-template-columns: repeat(3, 1fr);
-    gap: 2px;
+  /* ---------- CATEGORIAS (4 retângulos largura total) ---------- */
+  .categories{
+    display:flex;
+    flex-direction:column;
+    gap:2px;
     background: var(--line);
     border-top: 1px solid var(--line);
   }
-  .cell{
+  .category{
     position:relative;
-    aspect-ratio: 4 / 5;
+    display:block;
+    aspect-ratio: 5 / 1;
     background: var(--cell);
     overflow:hidden;
-    display:block;
   }
-  .cell .placeholder-img{
+  .category .placeholder-img{
     position:absolute;
     inset:0;
-    background:
-      linear-gradient(135deg, #1d1d1a 0%, #121210 100%);
+    background: linear-gradient(135deg, #1d1d1a 0%, #121210 100%);
+    transition: transform 0.6s ease, filter 0.4s ease;
   }
-  .cell .overlay{
+  .category::after{
+    content:"";
     position:absolute;
     inset:0;
-    display:flex;
-    align-items:center;
-    justify-content:center;
-    background: rgba(10,10,10,0);
-    transition: background 0.35s ease;
+    background: linear-gradient(to top, rgba(10,10,10,0.55) 0%, rgba(10,10,10,0) 45%);
+    pointer-events:none;
   }
-  .cell .overlay span{
+  .category .label{
+    position:absolute;
+    left: 40px;
+    bottom: 24px;
+    z-index:2;
     font-family:'Cormorant Garamond', serif;
-    font-size: 20px;
-    letter-spacing: 0.02em;
+    font-size: clamp(26px, 3.2vw, 44px);
+    letter-spacing: 0.01em;
     color: var(--fg);
-    opacity:0;
-    transform: translateY(8px);
-    transition: opacity 0.35s ease, transform 0.35s ease;
-    text-align:center;
-    padding: 0 12px;
+    transition: transform 0.35s ease;
   }
-  .cell:hover .overlay{ background: rgba(10,10,10,0.72); }
-  .cell:hover .overlay span{ opacity:1; transform: translateY(0); }
-  .cell:focus-visible{ outline: 1px solid var(--fg); outline-offset: -4px; }
+  .category:hover .placeholder-img{ transform: scale(1.03); filter: brightness(1.25); }
+  .category:hover .label{ transform: translateX(8px); }
+  .category:focus-visible{ outline: 1px solid var(--fg); outline-offset: -4px; }
+
+  /* ---------- RODAPÉ ---------- */
+  footer{
+    padding: 70px 40px 36px;
+    border-top: 1px solid var(--line);
+  }
+  .footer-grid{
+    display:grid;
+    grid-template-columns: 1.2fr 1fr 1fr;
+    gap: 48px;
+    max-width: 1200px;
+    margin: 0 auto;
+  }
+  footer h3{
+    font-family:'Cormorant Garamond', serif;
+    font-weight:500;
+    font-size: 22px;
+    margin-bottom: 18px;
+  }
+  footer p, footer li, footer a{
+    font-size: 14px;
+    line-height: 1.9;
+    color: var(--muted);
+  }
+  footer ul{ list-style:none; }
+  footer a{ transition: color 0.25s ease; }
+  footer a:hover{ color: var(--fg); }
+  .footer-bottom{
+    max-width:1200px;
+    margin: 56px auto 0;
+    padding-top: 20px;
+    border-top: 1px solid var(--line);
+    font-size: 12px;
+    color: var(--muted);
+    display:flex;
+    justify-content:space-between;
+    flex-wrap:wrap;
+    gap:8px;
+  }
 
   /* ---------- RESPONSIVE ---------- */
   @media (max-width: 720px){
@@ -208,13 +245,13 @@
     }
     .nav-overlay.open{ display:block; }
     .hero{ padding: 60px 20px 60px; }
-    .grid{ grid-template-columns: repeat(2, 1fr); }
+    .category{ aspect-ratio: 5 / 2; }
+    .category .label{ left:20px; bottom:20px; }
+    footer{ padding: 50px 20px 28px; }
+    .footer-grid{ grid-template-columns: 1fr; gap: 36px; }
   }
   @media (min-width: 721px){
     .nav-overlay{ display:none !important; }
-  }
-  @media (max-width: 420px){
-    .grid{ grid-template-columns: repeat(1, 1fr); }
   }
 </style>
 </head>
@@ -267,30 +304,61 @@
     <p>espaços que narram a sua trajetória.</p>
   </section>
 
-  <section class="grid">
-    <!-- Projeto 01 (fixo) -> projeto-01.html -->
-    <a class="cell" href="projeto-01.html" target="_self">
+  <section class="categories">
+    <a class="category" href="residencial.html">
       <div class="placeholder-img"></div>
-      <div class="overlay"><span>Projeto 01</span></div>
+      <span class="label">residencial</span>
     </a>
-    <!-- 3 colunas x 12 linhas = 36 projetos (02 a 36 gerados abaixo) -->
+    <a class="category" href="comercial.html">
+      <div class="placeholder-img"></div>
+      <span class="label">comercial</span>
+    </a>
+    <a class="category" href="edificios.html">
+      <div class="placeholder-img"></div>
+      <span class="label">edifícios</span>
+    </a>
+    <a class="category" href="interiores.html">
+      <div class="placeholder-img"></div>
+      <span class="label">interiores</span>
+    </a>
   </section>
 
-<script>
-  const grid = document.querySelector('.grid');
-  const total = 36; // 3 x 12
-  for (let i = 2; i <= total; i++){
-    const n = String(i).padStart(2, '0');
-    const cell = document.createElement('a');
-    cell.className = 'cell';
-    cell.href = `projeto-${n}.html`;
-    cell.innerHTML = `
-      <div class="placeholder-img"></div>
-      <div class="overlay"><span>Projeto ${n}</span></div>
-    `;
-    grid.appendChild(cell);
-  }
-</script>
+  <footer>
+    <div class="footer-grid">
+      <div>
+        <h3>Contato</h3>
+        <ul>
+          <li>contato@studiomaska.com.br</li>
+          <li>+55 (31) 00000-0000</li>
+          <li>Rua Lorem Ipsum, 000 – Belo Horizonte, MG</li>
+        </ul>
+      </div>
+      <div>
+        <h3>Redes sociais</h3>
+        <ul>
+          <li><a href="https://www.instagram.com/" target="_blank" rel="noopener">Instagram</a></li>
+          <li><a href="https://wa.me/5500000000000" target="_blank" rel="noopener">WhatsApp</a></li>
+          <li><a href="https://br.pinterest.com/" target="_blank" rel="noopener">Pinterest</a></li>
+        </ul>
+      </div>
+      <div>
+        <h3>Navegação</h3>
+        <ul>
+          <li><a href="novidades.html">News</a></li>
+          <li><a href="residencial.html">Residencial</a></li>
+          <li><a href="comercial.html">Comercial</a></li>
+          <li><a href="edificios.html">Edifícios</a></li>
+          <li><a href="interiores.html">Interiores</a></li>
+          <li><a href="contato.html">Contato</a></li>
+        </ul>
+      </div>
+    </div>
+    <div class="footer-bottom">
+      <span>© 2026 Studio MASKA. Todos os direitos reservados.</span>
+      <span>espaços que narram a sua trajetória.</span>
+    </div>
+  </footer>
+
 
 </body>
 </html>
