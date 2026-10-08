@@ -268,13 +268,18 @@
   </section>
 
   <section class="grid">
-    <!-- 3 colunas x 12 linhas = 36 projetos -->
+    <!-- Projeto 01 (fixo) -> projeto-01.html -->
+    <a class="cell" href="projeto-01.html" target="_self">
+      <div class="placeholder-img"></div>
+      <div class="overlay"><span>Projeto 01</span></div>
+    </a>
+    <!-- 3 colunas x 12 linhas = 36 projetos (02 a 36 gerados abaixo) -->
   </section>
 
 <script>
   const grid = document.querySelector('.grid');
   const total = 36; // 3 x 12
-  for (let i = 1; i <= total; i++){
+  for (let i = 2; i <= total; i++){
     const n = String(i).padStart(2, '0');
     const cell = document.createElement('a');
     cell.className = 'cell';
