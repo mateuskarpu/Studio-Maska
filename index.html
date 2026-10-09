@@ -135,25 +135,82 @@
   nav a:hover{ color: var(--fg); }
   nav a:hover::after{ width:100%; }
 
-  /* ---------- HERO ---------- */
-  .hero{
-    text-align:center;
-    padding: 90px 24px 100px;
+  /* ---------- SLIDER (destaques em rotação) ---------- */
+  .slider{
+    position:relative;
+    width:100%;
+    aspect-ratio: 21 / 9;
+    min-height: 340px;
+    max-height: 82vh;
+    overflow:hidden;
+    background: var(--cell);
   }
-  .hero h1{
-    font-family: 'Cormorant Garamond', serif;
-    font-weight: 500;
-    font-size: clamp(42px, 8vw, 84px);
+  .slide{
+    position:absolute;
+    inset:0;
+    opacity:0;
+    transition: opacity 1s ease;
+    pointer-events:none;
+  }
+  .slide.active{ opacity:1; pointer-events:auto; }
+  .slide .placeholder-img{
+    position:absolute;
+    inset:0;
+  }
+  .slide:nth-child(1) .placeholder-img{ background: linear-gradient(135deg, #e6e3dc 0%, #f0eee8 100%); }
+  .slide:nth-child(2) .placeholder-img{ background: linear-gradient(135deg, #e9e6df 0%, #dedbd3 100%); }
+  .slide:nth-child(3) .placeholder-img{ background: linear-gradient(135deg, #f0eee8 0%, #e2dfd8 100%); }
+  .slide:nth-child(4) .placeholder-img{ background: linear-gradient(135deg, #dfdcd5 0%, #eceae4 100%); }
+  .slide:nth-child(5) .placeholder-img{ background: linear-gradient(135deg, #ebe8e1 0%, #e0ddd6 100%); }
+  .slide::after{
+    content:"";
+    position:absolute;
+    inset:0;
+    background: linear-gradient(to top, rgba(245,243,238,0.75) 0%, rgba(245,243,238,0) 55%);
+    pointer-events:none;
+  }
+  .slide-text{
+    position:absolute;
+    left: 40px;
+    bottom: 28px;
+    z-index:2;
+    max-width: min(620px, calc(100% - 80px));
+  }
+  .slide-text h2{
+    font-family:'Cormorant Garamond', serif;
+    font-weight:500;
+    font-size: clamp(26px, 3.2vw, 44px);
     letter-spacing: 0.01em;
-    line-height: 1;
+    line-height:1.1;
+    color: var(--fg);
   }
-  .hero p{
-    margin-top: 22px;
-    font-family: 'Cormorant Garamond', serif;
+  .slide-text p{
+    margin-top: 10px;
+    font-family:'Cormorant Garamond', serif;
     font-style: italic;
-    font-size: clamp(16px, 2vw, 20px);
+    font-size: clamp(14px, 1.3vw, 18px);
+    line-height: 1.5;
     color: var(--muted);
   }
+  .dots{
+    display:flex;
+    justify-content:center;
+    align-items:center;
+    gap: 14px;
+    padding: 20px 0 22px;
+  }
+  .dot{
+    width: 10px;
+    height: 10px;
+    padding:0;
+    border-radius:50%;
+    border: 1px solid var(--fg);
+    background: transparent;
+    cursor:pointer;
+    transition: background 0.3s ease, transform 0.3s ease;
+  }
+  .dot:hover{ transform: scale(1.25); }
+  .dot.active{ background: var(--fg); }
 
   /* ---------- CATEGORIAS (4 retângulos largura total) ---------- */
   .categories{
@@ -277,7 +334,8 @@
       z-index: 999;
     }
     .nav-overlay.open{ display:block; }
-    .hero{ padding: 60px 20px 60px; }
+    .slider{ aspect-ratio: 4 / 3; min-height: 280px; }
+    .slide-text{ left:20px; bottom:20px; max-width: calc(100% - 40px); }
     .category{ aspect-ratio: 5 / 2; }
     .category .label{ left:20px; bottom:20px; }
     footer{ padding: 50px 20px 28px; }
@@ -342,12 +400,71 @@
     if (!ticking){ requestAnimationFrame(updateTopbar); ticking = true; }
   }, { passive:true });
   updateTopbar();
+
+  /* slider: troca automática a cada 5 segundos */
+  document.addEventListener('DOMContentLoaded', () => {
+    const slides = document.querySelectorAll('.slide');
+    const dots = document.querySelectorAll('.dot');
+    let slideIndex = 0;
+    let slideTimer;
+    function goTo(i){
+      slideIndex = (i + slides.length) % slides.length;
+      slides.forEach((el, n) => el.classList.toggle('active', n === slideIndex));
+      dots.forEach((el, n) => el.classList.toggle('active', n === slideIndex));
+    }
+    function startTimer(){
+      clearInterval(slideTimer);
+      slideTimer = setInterval(() => goTo(slideIndex + 1), 5000);
+    }
+    dots.forEach((d, n) => d.addEventListener('click', () => { goTo(n); startTimer(); }));
+    startTimer();
+  });
   </script>
 
-  <section class="hero">
-    <h1>Studio MASKA</h1>
-    <p>espaços que narram a sua trajetória.</p>
+  <section class="slider" id="slider">
+    <div class="slide active">
+      <div class="placeholder-img"></div>
+      <div class="slide-text">
+        <h2>projeto 01 em desenvolvimento</h2>
+        <p>Lorem ipsum dolor sit amet, consectetur adipiscing elit.</p>
+      </div>
+    </div>
+    <div class="slide">
+      <div class="placeholder-img"></div>
+      <div class="slide-text">
+        <h2>projeto 02 em desenvolvimento</h2>
+        <p>Sed do eiusmod tempor incididunt ut labore et dolore.</p>
+      </div>
+    </div>
+    <div class="slide">
+      <div class="placeholder-img"></div>
+      <div class="slide-text">
+        <h2>projeto 03 em desenvolvimento</h2>
+        <p>Ut enim ad minim veniam, quis nostrud exercitation.</p>
+      </div>
+    </div>
+    <div class="slide">
+      <div class="placeholder-img"></div>
+      <div class="slide-text">
+        <h2>projeto 04 em desenvolvimento</h2>
+        <p>Duis aute irure dolor in reprehenderit in voluptate.</p>
+      </div>
+    </div>
+    <div class="slide">
+      <div class="placeholder-img"></div>
+      <div class="slide-text">
+        <h2>projeto 05 em desenvolvimento</h2>
+        <p>Excepteur sint occaecat cupidatat non proident.</p>
+      </div>
+    </div>
   </section>
+  <div class="dots" id="dots">
+    <button class="dot active" aria-label="Projeto 01"></button>
+    <button class="dot" aria-label="Projeto 02"></button>
+    <button class="dot" aria-label="Projeto 03"></button>
+    <button class="dot" aria-label="Projeto 04"></button>
+    <button class="dot" aria-label="Projeto 05"></button>
+  </div>
 
   <section class="categories">
     <a class="category" href="/residencial/index.html">
