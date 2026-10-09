@@ -148,6 +148,7 @@
     overflow:hidden;
     background: var(--cell);
   }
+  .slider{ touch-action: pan-y; }
   .slide{
     position:absolute;
     inset:0;
@@ -437,6 +438,24 @@
     }
     dots.forEach((d, n) => d.addEventListener('click', () => { goTo(n); startTimer(); }));
     startTimer();
+
+    /* arrastar com o dedo (celular): 1º só vai p/ frente, 5º só volta, 2º ao 4º nos dois sentidos */
+    const sliderEl = document.getElementById('slider');
+    let startX = 0, startY = 0, swiped = false;
+    sliderEl.addEventListener('touchstart', e => {
+      const t = e.touches[0];
+      startX = t.clientX; startY = t.clientY; swiped = false;
+    }, { passive:true });
+    sliderEl.addEventListener('touchend', e => {
+      const t = e.changedTouches[0];
+      const dx = t.clientX - startX;
+      const dy = t.clientY - startY;
+      if (Math.abs(dx) < 40 || Math.abs(dx) < Math.abs(dy)) return;   // gesto curto ou vertical: ignora
+      if (dx < 0 && slideIndex < slides.length - 1){ goTo(slideIndex + 1); swiped = true; }   // arrastou p/ a esquerda -> próximo
+      else if (dx > 0 && slideIndex > 0){ goTo(slideIndex - 1); swiped = true; }              // arrastou p/ a direita -> anterior
+      if (swiped) startTimer();
+    }, { passive:true });
+    sliderEl.addEventListener('click', e => { if (swiped){ e.preventDefault(); swiped = false; } }, true);
   });
   </script>
 
