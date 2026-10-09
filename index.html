@@ -156,6 +156,8 @@
     pointer-events:none;
   }
   .slide.active{ opacity:1; pointer-events:auto; }
+  a.slide{ display:block; color:inherit; cursor:pointer; }
+  a.slide:hover .slide-text h2{ text-decoration:underline; text-decoration-thickness:1px; text-underline-offset:8px; }
   .slide .placeholder-img{
     position:absolute;
     inset:0;
@@ -439,13 +441,13 @@
   </script>
 
   <section class="slider" id="slider">
-    <div class="slide active">
+    <a class="slide active" href="residencial/projeto-01.html">
       <div class="placeholder-img"></div>
       <div class="slide-text">
         <h2>projeto 01 em desenvolvimento</h2>
         <p>Lorem ipsum dolor sit amet, consectetur adipiscing elit.</p>
       </div>
-    </div>
+    </a>
     <div class="slide">
       <div class="placeholder-img"></div>
       <div class="slide-text">
