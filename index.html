@@ -29,8 +29,10 @@
   /* ---------- TOPBAR (logo + nav na mesma linha) ---------- */
   .topbar{
     --p: 0;
-    position: sticky;
+    position: fixed;
     top: 0;
+    left: 0;
+    right: 0;
     z-index: 1001;
     isolation: isolate;
     display:flex;
@@ -51,6 +53,7 @@
     opacity: var(--p);
     z-index:-1;
   }
+  .topbar-spacer{ height: 187px; }
   .logo-slot{
     position:relative;
     width: calc(150px + 40px * var(--p));
@@ -297,6 +300,7 @@
   /* ---------- RESPONSIVE ---------- */
   @media (max-width: 720px){
     .topbar{ padding: calc(14px - 6px * var(--p)) 20px; }
+    .topbar-spacer{ height: 179px; }
     .menu-toggle{ display:flex; }
     nav{
       display:flex;
@@ -369,6 +373,8 @@
     </nav>
   </div>
 
+  <div class="topbar-spacer" id="topbarSpacer"></div>
+
   <div class="nav-overlay" id="navOverlay"></div>
 
   <script>
@@ -399,6 +405,17 @@
   window.addEventListener('scroll', () => {
     if (!ticking){ requestAnimationFrame(updateTopbar); ticking = true; }
   }, { passive:true });
+  /* espaçador: reserva a altura inicial da barra, para a página não "pular" ao rolar */
+  const spacer = document.getElementById('topbarSpacer');
+  function setSpacer(){
+    const prev = topbar.style.getPropertyValue('--p') || '0';
+    topbar.style.setProperty('--p', '0');
+    spacer.style.height = topbar.offsetHeight + 'px';
+    topbar.style.setProperty('--p', prev);
+  }
+  setSpacer();
+  window.addEventListener('resize', setSpacer);
+  window.addEventListener('load', setSpacer);
   updateTopbar();
 
   /* slider: troca automática a cada 5 segundos */
